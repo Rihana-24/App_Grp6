@@ -1,0 +1,9 @@
+np
+streamlit 
+pandas
+bs4 
+requests
+plotly.express 
+base64
+pyarrow
+
