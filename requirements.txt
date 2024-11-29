@@ -8,3 +8,13 @@ pybase64
 pyarrow
 
 
+def load(dataframe, title, key key1, key4):
+    """Load a Streamlit UI with unique keys for all components."""
+    st.markdown("""<style> div.stButton {text-align: center;} </style>""", unsafe_allow_html=True)
+    
+    if st.button(title, key=key1):
+        st.subheader('Display Data Dimension')
+        st.write(f'Data dimension: {dataframe.shape[0]} rows and {dataframe.shape[1]} columns.')
+        st.dataframe(dataframe)
+        csv = convert_df(dataframe)
+        st.download_button(label="Download data as CSV", data=csv, file_name='Data.csv', mime='text/csv', key=key4)
