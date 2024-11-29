@@ -207,28 +207,140 @@ elif Choices == 'Dashboard of the data':
     col1, col2 , col3 , col4, col5 = st.columns(5)
     with col1:
     
-        # Scatter plot and Box plot for df1 (Men's clothes)
-        fig1_scatter = px.scatter(df1, x="type_clothes", y="price", title="Price vs Men Type of Clothes")
-        st.plotly_chart(fig1_scatter)
-   
-    with col2:
-         fig1_box = px.box(df1, x="type_clothes", y="price", title="Price Distribution by Men Type of Clothes")
-         st.plotly_chart(fig1_box)
-    with col3:    
-    # Scatter plot and Box plot for df2 (Men's shoes)
-         fig2_scatter = px.scatter(df2, x="type_shoes", y="price", title="Price vs Men Type of Shoes")
-         st.plotly_chart(fig2_scatter)
-    with col3:
-         fig2_box = px.box(df2, x="type_shoes", y="price", title="Price Distribution by Men Type of Shoes")    
-         st.plotly_chart(fig2_box)
+        
+        # Define the nested dictionary
+        clothing_dict = {
+            'tenues_africaines': [
+                'Tenu africaine', 'Tenue africaine', 'Boubou africain homme', 'Tenues africaines', 'Tenues africaines hommes',
+                'Jallaba', 'Jallabé homme', 'Jallaba homme', 'Jalabba', 'Jallaba + Pantalon', 'Jallabas homme'
+            ],
+            'vêtements_hommes': [
+                'Vêtement homme', 'Chemise décontractée', 'Ensemble homme', 'T-shirt en coton', 'Chemise', 'Chemise homme', 
+                'Chemise Giant', 'T-shirt coton', 'Pantalon kaki', 'Ensemble polo pantalon', 'Vêtements homme', 'Pantalons hommes',
+                'Pantalons et chemises', 'Polo Lacoste', 'Short', 'Pantalons kaki', 'Vêtements homme', 'Pantalon chic', 
+                'Chemises homme', 'Maillots NBA', 'Pantalon Kaki Homme', 'Polo Lacoste homme', 'Pantalon bleu', 'Ensemble homme coton'
+            ],
+            'vêtements_détente': [
+                'T-shirt', 'Tee-shirt coton', 'T-shirt Polo', 'Tee-shirts en coton', 'Débardeur', 'Débardeur homme',
+                'Vêtements', 'Vêtements hommes', 'Débardeur coton', 'T-shirt Louis Vuitton', 'T-shirt Essential', 'T-shirt Amiri'
+            ],
+            'vêtements_chic': [
+                'Pantalon jean', 'Chemise en lin', 'Smoking', 'Ensemble costume', 'Pantalon jeans déchiré', 'Veste blazer',
+                'Chemise Lin', 'Pantalon + chemise', 'Pantalon kaki homme', 'Chemise Madras homme', 'T-shirt - Moncler',
+                'T-shirt - Givenchy', 'Blouson', 'Blouson homme', 'Veste blazer homme'
+            ],
+            'vêtements_été': [
+                'Ensemble t-shirt - short', 'Ensemble short + t-shirt', 'T-shirt polo', 'T-shirt Dior', 'Ensemble Lacoste - Kaki', 
+                'Shorts homme', 'Chemise courte manche', 'Ensemble Polo', 'Pantalon Kaki', 'T-shirt Body homme', 'Ensemble Adidas',
+                'T-shirt Balenciaga', 'Ensemble Polo + pantalon', 'Short Nike', 'T-shirt - Fear of god', 'T-shirt - Nasa'
+            ],
+            'vêtements_formels': [
+                'Chemise longues manches', 'Chemise courte manche en coton', 'Pantalon jeans homme', 'Chemises Lacoste', 
+                'Vêtements homme', 'Ensemble t-shirt - pantalon', 'Ensemble Chemise', 'Chemises Gant', 'Pantalon + Polo',
+                'Pantalon jeans', 'Pantalon + t-shirt', 'Polo Lacoste en coton', 'T-shirt Prada', 'T-shirt - Louis Vuitton', 
+                'Chemise - pantalon', 'T-shirt - Amiri', 'T-shirt - Gucci', 'T-shirt - Balenciaga'
+            ]
+        }
+        
+        # Flatten the nested dictionary
+        flat_mapping = {item: main_category for main_category in clothing_dict for item in clothing_dict[main_category]}
+        
+        # Replace `type_clothes` values using the mapping
+        df1['type_clothes'] = df1['type_clothes'].replace(flat_mapping)
+        
+        # Filter data to keep only mapped categories
+        df1_filtered = df1[df1['type_clothes'].isin(flat_mapping.values())]
+        
+        # Count occurrences of each category
+        category_counts = df1_filtered['type_clothes'].value_counts().reset_index()
+        category_counts.columns = ['Category', 'Count']
+        
+        # Create a pie chart using Plotly Express
+        fig_pie = px.pie(category_counts, names='Category', values='Count',
+                         title='Répartition des Catégories de Vêtements')
+        
+        # Display the pie chart in Streamlit
+        st.title("Analyse des Catégories de Vêtements")
+        st.plotly_chart(fig_pie)
+
+
+with col2:
+         # Define the nested dictionary
+         clothing_dict = {
+         "Girls": {
+             "Dresses": [
+                 "Robe enfant", "Robe princesse", "Robe fille", "Robe broderie enfant",
+                 "Robe pour anniversaire ou cérémonie", "Robe enfant princesse",
+                 "Robe de cérémonie enfant", "Robe wax enfant"
+             ],
+             "Ensembles": [
+                 "Ensemble fille", "Ensemble short fille", "Ensemble t-shirt + culotte",
+                 "Ensemble 5 pièces", "Ensemble coton fille"
+             ],
+             "Accessories": [
+                 "Boxer slip fille", "Caleçon fille", "Jupe fille", "Slip fille"
+             ]
+         },
+         "Boys": {
+             "Ensembles": [
+                 "Ensemble garçon", "Ensemble chemise - pantalon enfant",
+                 "Ensemble coton garçon", "Ensemble short + t-shirt garçon"
+             ],
+             "Tops": [
+                 "Polo enfant", "Chemise garçon", "T-shirt enfant"
+             ],
+             "Bottoms": [
+                 "Pantalon garçon", "Short Enfant", "Caleçons garçon"
+             ]
+         }
+     }
+     
+     # Flatten the nested dictionary for "Girls" and "Boys" only
+flat_mapping = {}
+for main_category in ["Girls", "Boys"]:  # Filter for only Girls and Boys
+             subcategories = clothing_dict[main_category]
+             for subcategory, items in subcategories.items():
+                 for item in items:
+                     flat_mapping[item] = f"{main_category} - {subcategory}"
+         
+         # Replace `type_clothes` values using the filtered mapping
+                     df3['type_clothes'] = df3['type_clothes'].replace(flat_mapping)
+         
+         # Filter data to keep only mapped categories
+                     df3_filtered = df3[df3['type_clothes'].isin(flat_mapping.values())]
+         
+         # Group data by clothing category and calculate average price
+                     category_avg_price = df3_filtered.groupby('type_clothes')['price'].mean().reset_index()
+         
+         # Create a bar plot for average price by clothing category
+                     fig_bar = px.bar(
+             category_avg_price,
+             x='type_clothes',
+             y='price',
+             color='type_clothes',
+             title='Bar Plot of Average Price by Clothing Categories (Girls & Boys)',
+             labels={'type_clothes': 'Clothing Categories', 'price': 'Average Price'},
+             text='price',  # Add value labels to bars
+             template="plotly_white"
+         )
+    
+     # Update layout for better readability
+                     fig_bar.update_layout(
+         xaxis_tickangle=45,
+         xaxis_title="Clothing Categories",
+         yaxis_title="Average Price",
+     )
+    
+     # Streamlit App
+st.title("Bar Plot of Clothing Categories (Girls & Boys) vs Average Price")
+st.plotly_chart(fig_bar)
+with col3:    
+    
     with col4:
     # Scatter plot for Kids' Clothes (df3)
          fig3_scatter = px.scatter(df3, x="type_clothes", y="price", title="Price vs Kids Type of Clothes")
          st.plotly_chart(fig3_scatter)
-    with col5:
-    # Box plot for Kids' Shoes (df4)
-         fig4_box = px.box(df4, x="type_shoes", y="price", title="Price Distribution by Kids Type of Shoes")
-         st.plotly_chart(fig4_box)
+    
 
 else:
    components.html("""<iframe src=\"https://ee.kobotoolbox.org/i/kSxcH0CN\" width=\"800\" height=\"600\"></iframe> """, height=600,width=800)
