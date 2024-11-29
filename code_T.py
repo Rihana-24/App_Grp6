@@ -4,14 +4,16 @@
 """
 
 # Import packages
-import numpy as np
-import streamlit as st
-import pandas as pd
-from bs4 import BeautifulSoup as bs
-import requests
-import plotly.express as px
-import base64
-import streamlit.components.v1 as components
+
+# Import required packages for data scraping, processing, visualization, and Streamlit UI
+import numpy as np  # For numerical operations
+import streamlit as st  # For building interactive web apps
+import pandas as pd  # For data manipulation and analysis
+from bs4 import BeautifulSoup as bs  # For web scraping HTML content
+import requests  # For making HTTP requests to fetch web pages
+import plotly.express as px  # For creating interactive visualizations
+import base64  # For encoding binary files to base64 strings
+import streamlit.components.v1 as components  # For embedding HTML/JS elements in Streamlit
 
 # Describe the app functions
 st.markdown("<h1 style='text-align: center; color: blue;'>DATA COLLECTION APP</h1>", unsafe_allow_html=True)
@@ -38,21 +40,24 @@ def add_background(image_file):
 # Add the background image by specifying the filename
 add_background("img_file.jpg")
 
+
+# Caching function to optimize DataFrame conversion for CSV download
 @st.cache_data
 def convert_df(df):
     """Convert a dataframe to a CSV format encoded in UTF-8."""
     return df.to_csv().encode('utf-8')
 
+# Function to display data and provide a download button in Streamlit
 def load(dataframe, title, key1, key4):
     """Load a Streamlit UI with unique keys for all components."""
     st.markdown("""<style> div.stButton {text-align: center;} </style>""", unsafe_allow_html=True)
     
-    if st.button(title, key=key1):
-        st.subheader('Display Data Dimension')
-        st.write(f'Data dimension: {dataframe.shape[0]} rows and {dataframe.shape[1]} columns.')
-        st.dataframe(dataframe)
-        csv = convert_df(dataframe)
-        st.download_button(label="Download data as CSV", data=csv, file_name='Data.csv', mime='text/csv', key=key4)
+    if st.button(title, key=key1): # Display button with title
+        st.subheader('Display Data Dimension') # Subheader to show data dimensions
+        st.write(f'Data dimension: {dataframe.shape[0]} rows and {dataframe.shape[1]} columns.')  # Show data shape
+        st.dataframe(dataframe)  # Render the DataFrame in the app
+        csv = convert_df(dataframe)  # Convert DataFrame to CSV
+        st.download_button(label="Download data as CSV", data=csv, file_name='Data.csv', mime='text/csv', key=key4) # Add download button
 
 def load_Vetements_homme(mul_page):
     df = pd.DataFrame()
@@ -199,35 +204,31 @@ elif Choices == 'Dashboard of the data':
     df2 = pd.read_csv('data/Chaussures_hommes_clean.csv') 
     df3 = pd.read_csv('data/Vetements_enfants_clean.csv') 
     df4 = pd.read_csv('data/chaussures_enfants_clean.csv')  
-
-    st.dataframe(df1)
-    st.dataframe(df2)
-    st.dataframe(df3)
-    st.dataframe(df4)
-
-    # Scatter plot and Box plot for df1 (Men's clothes)
-    fig1_scatter = px.scatter(df1, x="type_clothes", y="price", title="Price vs Men Type of Clothes")
-    fig1_box = px.box(df1, x="type_clothes", y="price", title="Price Distribution by Men Type of Clothes")
+    col1, col2 , col3 , col4, col5 = st.columns(5)
+    with col1:
     
-    st.plotly_chart(fig1_scatter)
-    st.plotly_chart(fig1_box)
-
+        # Scatter plot and Box plot for df1 (Men's clothes)
+        fig1_scatter = px.scatter(df1, x="type_clothes", y="price", title="Price vs Men Type of Clothes")
+        st.plotly_chart(fig1_scatter)
+   
+    with col2:
+         fig1_box = px.box(df1, x="type_clothes", y="price", title="Price Distribution by Men Type of Clothes")
+         st.plotly_chart(fig1_box)
+    with col3:    
     # Scatter plot and Box plot for df2 (Men's shoes)
-    fig2_scatter = px.scatter(df2, x="type_shoes", y="price", title="Price vs Men Type of Shoes")
-    fig2_box = px.box(df2, x="type_shoes", y="price", title="Price Distribution by Men Type of Shoes")
-    
-    st.plotly_chart(fig2_scatter)
-    st.plotly_chart(fig2_box)
-
+         fig2_scatter = px.scatter(df2, x="type_shoes", y="price", title="Price vs Men Type of Shoes")
+         st.plotly_chart(fig2_scatter)
+    with col3:
+         fig2_box = px.box(df2, x="type_shoes", y="price", title="Price Distribution by Men Type of Shoes")    
+         st.plotly_chart(fig2_box)
+    with col4:
     # Scatter plot for Kids' Clothes (df3)
-    fig3_scatter = px.scatter(df3, x="type_clothes", y="price", title="Price vs Kids Type of Clothes")
-    
-    st.plotly_chart(fig3_scatter)
-
+         fig3_scatter = px.scatter(df3, x="type_clothes", y="price", title="Price vs Kids Type of Clothes")
+         st.plotly_chart(fig3_scatter)
+    with col5:
     # Box plot for Kids' Shoes (df4)
-    fig4_box = px.box(df4, x="type_shoes", y="price", title="Price Distribution by Kids Type of Shoes")
-    
-    st.plotly_chart(fig4_box)
+         fig4_box = px.box(df4, x="type_shoes", y="price", title="Price Distribution by Kids Type of Shoes")
+         st.plotly_chart(fig4_box)
 
 else:
    components.html("""<iframe src=\"https://ee.kobotoolbox.org/i/kSxcH0CN\" width=\"800\" height=\"600\"></iframe> """, height=600,width=800)
