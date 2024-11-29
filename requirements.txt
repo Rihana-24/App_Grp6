@@ -1,9 +1,10 @@
-np
+numpy
 streamlit 
 pandas
 bs4 
 requests
 plotly.express 
-base64
+pybase64
 pyarrow
+
 
